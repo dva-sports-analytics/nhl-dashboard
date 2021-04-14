@@ -9,7 +9,13 @@ import dash_core_components as dcc
 import dash_html_components as html
 from dash.dependencies import Input, Output
 
-#Set Up dashboard
+# Data Manipulation -----------
+
+# Modeling --------------------
+
+# Build Visualizations --------
+
+#Set Up dashboard -------------
 app = dash.Dash(__name__)
 
 app.layout = html.Div(children=[
