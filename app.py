@@ -4,22 +4,32 @@ import dash_html_components as html
 import plotly.graph_objs as go
 import numpy as np
 import pandas as pd
+import plotly.express as px
 
-########### Define your variables
+# Data Manipulation -----------
+
+
 beers=['Chesapeake Stout', 'Snake Dog IPA', 'Imperial Porter', 'Double Dog IPA']
 ibu_values=[35, 60, 85, 75]
 abv_values=[5.4, 7.1, 9.2, 4.3]
 color1='darkred'
 color2='orange'
-mytitle='Beer Comparison'
-tabtitle='beer!'
-myheading='Flying Dog Beers'
+mytitle='Shot Analysis'
+tabtitle='NHL Analysis'
+myheading='Hockey Analytics'
 label1='IBU'
 label2='ABV'
-githublink='https://github.com/austinlasseter/flying-dog-beers'
+githublink='https://github.com/dva-sports-analytics/nhl-dashboard'
 sourceurl='https://www.flyingdog.com/beers/'
 
-########### Set up the chart
+
+# Modeling --------------------
+
+
+
+# Build Visualizations --------
+
+
 bitterness = go.Bar(
     x=beers,
     y=ibu_values,
@@ -40,6 +50,11 @@ beer_layout = go.Layout(
 )
 
 beer_fig = go.Figure(data=beer_data, layout=beer_layout)
+
+#Set Up dashboard -------------
+
+
+
 
 
 ########### Initiate the app
