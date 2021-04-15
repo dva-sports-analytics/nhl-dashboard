@@ -6,17 +6,22 @@ import numpy as np
 import pandas as pd
 import plotly.express as px
 
+
+# ---------------------------------------
+# To-Do:
+# - Connect to Snowflake Data
+# - Build Sidebar with filters
+# - Make dashboard more aesthetically pleasing
+# - Incoporate additional visualizations
+# - Do some modeling
+
+
 # Data Manipulation -----------
 
 ## Global Variables
-
-color1='darkred'
-color2='orange'
 mytitle='Shot Analysis'
 tabtitle='NHL Analysis'
 myheading='Hockey Analytics'
-label1='IBU'
-label2='ABV'
 githublink='https://github.com/dva-sports-analytics/nhl-dashboard'
 sourceurl='http://www.nhl.com/stats/'
 
@@ -30,11 +35,6 @@ df['is_rebound_attempt'] = df['time_since_last_shot'].apply(lambda x: True if x 
 df['shot_type'] = df['shot_type'].apply(lambda x: 'Wrist Shot' if pd.isna(x) else x)
 
 select_df = df[['game_id', 'team', 'scored', 'distance_to_goal', 'shot_type', 'is_rebound_attempt']]
-
-
-beers=['Chesapeake Stout', 'Snake Dog IPA', 'Imperial Porter', 'Double Dog IPA']
-ibu_values=[35, 60, 85, 75]
-abv_values=[5.4, 7.1, 9.2, 4.3]
 
 
 #### Shot Summary DataFrame
@@ -55,29 +55,6 @@ summarized_shots.drop(["scored", 'distance_to_goal'], axis = 1)
 
 
 # Build Visualizations --------
-
-
-bitterness = go.Bar(
-    x=beers,
-    y=ibu_values,
-    name=label1,
-    marker={'color':color1}
-)
-alcohol = go.Bar(
-    x=beers,
-    y=abv_values,
-    name=label2,
-    marker={'color':color2}
-)
-
-beer_data = [bitterness, alcohol]
-beer_layout = go.Layout(
-    barmode='group',
-    title = mytitle
-)
-
-beer_fig = go.Figure(data=beer_data, layout=beer_layout)
-
 
 shot_type_Bar = px.bar(summarized_shots, x = 'shot_type', y = "Points",
                        labels = {"shot_type":"Shot Type"},
