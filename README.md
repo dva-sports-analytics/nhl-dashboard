@@ -1,1 +1,1 @@
-# nhl-dashboard
+# Data Analytics and Hockey
