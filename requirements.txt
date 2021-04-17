@@ -4,6 +4,7 @@ chardet
 Click
 dash
 dash-core-components
+dash-bootstrap-components
 dash-html-components
 dash-renderer
 dash-table
@@ -27,3 +28,4 @@ pytz
 six
 traitlets
 Werkzeug
+datetime
