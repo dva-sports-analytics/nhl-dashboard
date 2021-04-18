@@ -1,8 +1,6 @@
 # Data Analytics and Hockey
-
-## A Data and Visual Analytics Project for Georgia Tech University
-
 ![Georgia Tech Logo](https://miro.medium.com/max/403/1*YowZrQ6aLxKgFqOA_Tp__A.png)
+## A Data and Visual Analytics Project for Georgia Tech University
 
 Created by:
 - [Jeff Gallini](https://www.linkedin.com/in/jeff-gallini/)
