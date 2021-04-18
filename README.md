@@ -2,7 +2,7 @@
 
 ## A Data and Visual Analytics Project for Georgia Tech University
 
-![Georgia Tech Logo](https://energydata.info/uploads/group/2017-05-15-174647.552555GeorgiaTechLogo-black-gold.png){:height="50%" width="50%"}
+![Georgia Tech Logo](https://miro.medium.com/max/403/1*YowZrQ6aLxKgFqOA_Tp__A.png)
 
 Created by:
 - [Jeff Gallini](https://www.linkedin.com/in/jeff-gallini/)
