@@ -157,17 +157,14 @@ sidebar = html.Div(children=[
     html.A('Code on Github', href=githublink, style = {'vertical-align': 'text-bottom'}),
     html.Br(),
     html.A('Data Source', href=sourceurl, style = {'vertical-align': 'text-bottom'}),
-    html.Br(),
-    dcc.Interval(id="progress-interval", 
-                 n_intervals=0, interval=500),
-    dbc.Progress(id="progress", striped=True, animated = True)
+    html.Br()
     ],
     style = SIDEBAR_STYLE
     )
     
 #Content-----------------------------------------------------------------------------------------------------:   
 
-content = html.Div([
+content = html.Div([dbc.Spinner(children = [
 #Viz Tab-------------------------------------------------------------------------------------------------:
     dcc.Tabs([
         dcc.Tab(label='Visualizations', children=[
@@ -204,6 +201,10 @@ content = html.Div([
     
     
     ],
+    size = "md",
+    color = 'primary',
+    type = 'border'
+    )],
     style = DASHBOARD_STYLE
 )
 
