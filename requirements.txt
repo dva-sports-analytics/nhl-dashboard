@@ -29,3 +29,4 @@ six
 traitlets
 Werkzeug
 datetime
+base64
