@@ -9,7 +9,8 @@ import pandas as pd
 import plotly.express as px
 from datetime import date
 import base64
-
+from modules.data_processing import DataProcessing
+from modules.visualizations import Visualizations
 # ---------------------------------------
 # To-Do:
 # - Connect to Snowflake Data
@@ -28,20 +29,14 @@ myheading='Hockey Analytics'
 githublink='https://github.com/dva-sports-analytics/nhl-dashboard'
 sourceurl='http://www.nhl.com/stats/'
 image_filename = 'assets/National_Hockey_League_shield.svg'
-df = pd.read_csv('data/shots.csv')
-df.rename(columns={"result.secondaryType": "shot_type", "team.triCode": "team"}, inplace=True)
-# All the unique Team codes + Select All button for sidebar dropdown
-team_dict = [{"label": teams, "value": teams} for teams in df['team'].unique() if not pd.isna(teams)]
-team_dict = [{"label": "Select All", "value": "ALL"}] + team_dict
-# All the season options
-seasons = {int(season): season for season in df['game_id'].astype(str).str[:4].unique() if not pd.isna(season)}
-# All the unique Shot Types + Select All button for sidebar dropdown
-shot_type = [{"label": shot_type, "value": shot_type} for shot_type in df['shot_type'].unique() if not pd.isna(shot_type)]
-shot_type = [{"label": "Select All", "value": "ALL"}] + shot_type
-# All the Period Options
-periods = [{"label": period, "value": period} for period in df['period'].unique() if not pd.isna(period) and period <= 3]
-periods = [{"label": "Select All", "value": "ALL"}] + periods + [{"label": "Overtime", "value": "OT"}]
 
+
+dp = DataProcessing(filepath='./data/shots.csv')
+
+# df = pd.read_csv('data/shots.csv')
+df = dp.load_data()
+# df.rename(columns={"result.secondaryType": "shot_type", "team.triCode": "team"}, inplace=True)
+team_dict, shot_type, periods, seasons = dp.create_dropdowns()
 #------------------------------------------------------------------------------------------------------------
 
 ## Hockey Dataframe
@@ -53,227 +48,23 @@ df['is_rebound_attempt'] = df['time_since_last_shot'].apply(lambda x: True if x 
 df['shot_type'] = df['shot_type'].apply(lambda x: 'Wrist Shot' if pd.isna(x) else x)
 df['season'] = df['game_id'].astype(str).str[:4].astype(int)
 
-select_df = df[['game_id', 'team', 'scored', 'distance_to_goal', 'shot_type', 'is_rebound_attempt']]
 #------------------------------------------------------------------------------------------------------------
-
+# Init of Vis class
+vis = Visualizations(df=df)
 
 #### Shot Summary DataFrame----------------------------------------------------------------------------------
-summarized_shots = select_df.groupby(['shot_type', "is_rebound_attempt"])\
-         .agg({'scored':["sum", "count"], "distance_to_goal":"mean"})\
-         .reset_index()
-
-summarized_shots["Accuracy"] = summarized_shots["scored"]["sum"] / summarized_shots["scored"]["count"]
-
-summarized_shots["Points"] = summarized_shots["scored"]["sum"]
-summarized_shots["Avg_Distance_to_Goal"] = summarized_shots["distance_to_goal"]["mean"]
-
-summarized_shots.drop(["scored", 'distance_to_goal'], axis = 1)
+shot_type_Bar = vis.summarized_shots_bar()
 #------------------------------------------------------------------------------------------------------------
-
-
-
+hockey_rink = vis.hockey_rink
+hockey_rink_rev = vis.hockey_rink_rev
 # Modeling --------------------
-
-
-
 # Build Visualizations --------:
 
-#Shot Type Visualization
-shot_type_Bar = px.bar(summarized_shots, x = 'shot_type', y = "Points",
-                       labels = {"shot_type":"Shot Type"},
-                       color = "is_rebound_attempt",
-                       title = "Points by Shot Type", 
-                       hover_data=['Accuracy', 'Avg_Distance_to_Goal'])\
-                  .update_xaxes(categoryorder = "total descending")
-                  
 #Shot Distribution
-
-hockey_rink = 'assets/Half_ice_hockey_rink.png'
-hockey_rink = base64.b64encode(open(hockey_rink, 'rb').read())
-
-shots = go.Figure()
-
-shots.add_trace(go.Histogram2dContour(
-        x=df["coordinates.x"],
-        y=df["coordinates.y"],
-        z =df["scored"],
-        colorscale = 'Thermal',
-        xaxis = 'x',
-        yaxis = 'y',
-        opacity = .8,
-        showscale = True,
-        name="Shot Distribution",
-        hovertemplate = "x: %{x}<br>y: %{y}<br>Shots: %{z}"
-        ))
-
-shots.add_trace(go.Histogram(
-        y = df["coordinates.y"],
-        xaxis = 'x2',
-        marker = dict(
-            color = 'rgba(0,0,0,1)'
-        ),
-        name="Y-Axis Shot Histogram"
-    ))
-
-shots.add_trace(go.Histogram(
-        x = df["coordinates.x"],
-        yaxis = 'y2',
-        marker = dict(
-            color = 'rgba(0,0,0,1)'
-        ),
-        name="X-Axis Shot Histogram"
-    ))
-
-shots.add_layout_image(
-        dict(
-            source='data:image/png;base64,{}'.format(hockey_rink.decode()),
-            xref="x",
-            yref="y",
-            x=20,
-            y=43,
-            sizex=80,
-            sizey=85,
-            sizing="stretch",
-            layer="below")
-)
-
-shots.update_layout(
-    autosize = False,
-    xaxis = dict(
-        zeroline = False,
-        domain = [0,0.85],
-        showticklabels=False,
-        fixedrange = True,
-        showgrid = False
-    ),
-    yaxis = dict(
-        zeroline = False,
-        domain = [0,0.85],
-        showticklabels=False,
-        fixedrange = True,
-        showgrid = False
-    ),
-    xaxis2 = dict(
-        zeroline = False,
-        domain = [0.85,1],
-        fixedrange = True,
-        showgrid = False
-    ),
-    yaxis2 = dict(
-        zeroline = False,
-        domain = [0.85,1],
-        fixedrange = True,
-        showgrid = False
-    ),
-    height = 600,
-    width = 600,
-    bargap = 0,
-    hovermode = 'closest',
-    showlegend = False,
-    title={
-        'text': "NHL Shot Distirbution",
-        'y':0.9,
-        'x':0.5,
-        'xanchor': 'center',
-        'yanchor': 'top'}
-)
-
+shots = vis.shot_distribution_heatmap()
 ## Scoring Distribution Chart
-hockey_rink_rev = 'assets/Half_ice_hockey_rink_rev.png'
-hockey_rink_rev = base64.b64encode(open(hockey_rink_rev, 'rb').read())
 
-score_dist = go.Figure()
-
-score_dist.add_trace(go.Histogram2dContour(
-        x=df["coordinates.x"],
-        y=df["coordinates.y"],
-        z =df["scored"],
-        colorscale = 'Thermal',
-        xaxis = 'x',
-        yaxis = 'y',
-        opacity = .8,
-        showscale = True,
-        histfunc = "sum",
-        name="Shot Distribution",
-        hovertemplate = "x: %{x}<br>y: %{y}<br>Scores: %{z}"
-        ))
-
-score_dist.add_trace(go.Histogram(
-        y = df.loc[df["scored"] == 1]["coordinates.y"],
-        xaxis = 'x2',
-        
-        marker = dict(
-            color = 'rgba(0,0,0,1)'
-        ),
-        name="Y-Axis Score Histogram"
-    ))
-
-score_dist.add_trace(go.Histogram(
-        x = df.loc[df["scored"] == 1]["coordinates.x"],
-        yaxis = 'y2',
-        marker = dict(
-            color = 'rgba(0,0,0,1)'
-        ),
-        name="X-Axis Score Histogram"
-    ))
-
-score_dist.add_layout_image(
-        dict(
-            source='data:image/png;base64,{}'.format(hockey_rink_rev.decode()),
-            xref="x",
-            yref="y",
-            x=100,
-            y=43,
-            sizex=80,
-            sizey=85,
-            sizing="stretch",
-            layer="below")
-)
-
-score_dist.update_layout(
-    autosize = False,
-    xaxis = dict(
-        zeroline = False,
-        domain = [0.15,1],
-        showticklabels=False,
-        #fixedrange = True,
-        showgrid = False
-    ),
-    yaxis = dict(
-        zeroline = False,
-        domain = [0,.85],
-        showticklabels=False,
-        fixedrange = True,
-        showgrid = False
-    ),
-    xaxis2 = dict(
-        zeroline = False,
-        domain = [0,.15],
-        #fixedrange = True,
-        showgrid = False
-    ),
-    yaxis2 = dict(
-        zeroline = False,
-        domain = [0.85,1],
-        fixedrange = True,
-        showgrid = False
-    ),
-    height = 600,
-    width = 600,
-    bargap = 0,
-    hovermode = 'closest',
-    showlegend = False,
-    title={
-        'text': "NHL Scoring Distirbution",
-        'y':0.9,
-        'x':0.5,
-        'xanchor': 'center',
-        'yanchor': 'top'}
-)
-score_dist['layout']['xaxis2']['autorange'] = "reversed"
-score_dist['layout']['xaxis']['autorange'] = "reversed"
-
-
+score_dist = vis.score_distribution_heatmap()
 #------------------------------------------------------------------------------------------------------------
 
 #Set Up dashboard ------------------------------------------------------------------------------------------:
