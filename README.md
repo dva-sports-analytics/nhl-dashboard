@@ -24,6 +24,4 @@ You may also navigate to <https://nhl-analysis.herokuapp.com/> and access the da
 
 ## Contact
 
-For any questions or inquiries you may contact the contributors with from the following information:
-
-Jeff Gallini: <gallinij@gmail.com>
+For any questions or inquiries you may contact the creators 
