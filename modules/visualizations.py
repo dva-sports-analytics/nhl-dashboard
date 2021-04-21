@@ -1,15 +1,7 @@
-import dash
-import dash_core_components as dcc
-import dash_bootstrap_components as dbc
-import dash_html_components as html
-import dash_table
-import plotly.graph_objs as go
-import numpy as np
-import pandas as pd
-import plotly.express as px
-from datetime import date
 import base64
-import os
+
+import plotly.express as px
+import plotly.graph_objs as go
 
 
 class Visualizations():
