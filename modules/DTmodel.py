@@ -30,8 +30,8 @@ def DTmodel():
     df.loc[df.period > 3, "total_time_remaining"] = 0
 
     scaler = MinMaxScaler()
-    scaler.fit(df[['period_time_remaining', 'distance_to_goal', 'coordinates.x', "coordinates.y", 'total_time_remaining', 'time_of_last_shot', 'time_since_last_shot']])
-    df[['period_time_remaining', 'distance_to_goal', 'coordinates.x', "coordinates.y", 'total_time_remaining', 'time_of_last_shot', 'time_since_last_shot']] = scaler.transform(df[['period_time_remaining', 'distance_to_goal', 'coordinates.x', "coordinates.y", 'total_time_remaining', 'time_of_last_shot', 'time_since_last_shot']])
+    scaler.fit(df[['period_time_remaining', 'distance_to_goal', 'x_coordinates', "y_coordinates", 'total_time_remaining', 'time_of_last_shot', 'time_since_last_shot']])
+    df[['period_time_remaining', 'distance_to_goal', 'x_coordinates', "y_coordinates", 'total_time_remaining', 'time_of_last_shot', 'time_since_last_shot']] = scaler.transform(df[['period_time_remaining', 'distance_to_goal', 'coordinates.x', "coordinates.y", 'total_time_remaining', 'time_of_last_shot', 'time_since_last_shot']])
 
     cat_vars=['team', 'shot_type','is_rebound_attempt']
     for var in cat_vars:
@@ -90,8 +90,8 @@ def DTmodel():
     score_probs = go.Figure()
 
     score_probs.add_trace(go.Histogram2dContour(
-            x=X_test_final["coordinates.x"],
-            y=X_test_final["coordinates.y"],
+            x=X_test_final["x_coordinates"],
+            y=X_test_final["y_coordinates"],
             z =X_test_final["scoreProb"]*specificity,
             colorscale = 'Thermal',
             xaxis = 'x',
@@ -104,8 +104,8 @@ def DTmodel():
             ))
 
     score_probs.add_trace(go.Bar(
-            y = X_test_final.groupby('coordinates.y').agg({'scoreProb': 'mean'}).reset_index()['coordinates.y'],
-            x = X_test_final.groupby('coordinates.y').agg({'scoreProb': 'mean'}).reset_index()["scoreProb"]*.15,
+            y = X_test_final.groupby('y_coordinates').agg({'scoreProb': 'mean'}).reset_index()['y_coordinates'],
+            x = X_test_final.groupby('x_coordinates').agg({'scoreProb': 'mean'}).reset_index()["scoreProb"]*.15,
             xaxis = 'x2',
             orientation='h',
             marker = dict(
@@ -116,7 +116,7 @@ def DTmodel():
         ))
 
     score_probs.add_trace(go.Histogram(
-            x = X_test_final["coordinates.x"],
+            x = X_test_final["x_coordinates"],
             y = X_test_final["scoreProb"]*specificity,
             histfunc = 'avg',
             yaxis = 'y2',
