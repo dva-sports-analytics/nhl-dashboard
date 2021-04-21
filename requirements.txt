@@ -31,8 +31,5 @@ Werkzeug
 datetime
 pickle
 imblearn
-<<<<<<< HEAD
 matplotlib
-=======
-matplotlib
->>>>>>> main
+
