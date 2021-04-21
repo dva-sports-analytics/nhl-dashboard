@@ -190,30 +190,30 @@ content = html.Div( [dbc.Spinner(children = [
             dcc.Graph(id='score_Pred1', figure=dt_model, style = {"height":'90%', "width":"95%","margin-left":"20%","margin-right":"20%"})
             # dbc.Col(dcc.Graph(id='shot_pred2', figure=shots))
 
-        ]),
-#Data Tab-------------------------------------------------------------------------------------------------:        
-        dcc.Tab(label='Data', children=[
-            html.Br(),
-            dash_table.DataTable(
-                id='datatable-row-ids',
-                columns=[
-                    {'name': i, 'id': i, 'deletable': False} for i in df.columns
-                    # omit the id column
-                    if i != 'id'
-                ],
-                data=df.to_dict('records'),
-                editable=False,
-                filter_action="native",
-                sort_action="native",
-                sort_mode='multi',
-                row_selectable='multi',
-                row_deletable=False,
-                selected_rows=[],
-                page_action='native',
-                page_current= 0,
-                page_size= 23,
-            )
         ])
+#Data Tab-------------------------------------------------------------------------------------------------:        
+        # dcc.Tab(label='Data', children=[
+        #     html.Br(),
+        #     dash_table.DataTable(
+        #         id='datatable-row-ids',
+        #         columns=[
+        #             {'name': i, 'id': i, 'deletable': False} for i in df.columns
+        #             # omit the id column
+        #             if i != 'id'
+        #         ],
+        #         data=df.to_dict('records'),
+        #         editable=False,
+        #         filter_action="native",
+        #         sort_action="native",
+        #         sort_mode='multi',
+        #         row_selectable='multi',
+        #         row_deletable=False,
+        #         selected_rows=[],
+        #         page_action='native',
+        #         page_current= 0,
+        #         page_size= 23,
+        #     )
+        # ])
     ])
     
     
