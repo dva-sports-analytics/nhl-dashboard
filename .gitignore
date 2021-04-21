@@ -4,3 +4,4 @@ venv
 .DS_Store
 .idea/
 .vscode/
+app-v2.py

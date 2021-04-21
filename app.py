@@ -149,6 +149,7 @@ sidebar = html.Div(children=[
         value = [],
         multi=True
     ),
+
     #Bottom of Sidebar
     html.Br(),
     html.A('Code on Github', href=githublink, style = {'vertical-align': 'text-bottom'}),
