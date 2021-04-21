@@ -202,6 +202,9 @@ class RFClassifier():
 				sizing="stretch",
 				layer="below")
 		)
+		score_probs.update_layout(
+			autosize=True
+		)
 		return score_probs
 	def load_model(self):
 		print(f'Loading Model From {self.model_path}')

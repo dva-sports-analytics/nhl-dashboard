@@ -16,6 +16,7 @@ class DataProcessing():
 		return self.df
 	def create_dropdowns(self):
 	    # All the unique Team codes + Select All button for sidebar dropdown
+	    print('Creating Dropdown Labels')
 	    team_dict = [{"label": teams, "value": teams} for teams in self.df['team'].unique() if not pd.isna(teams)]
 	    team_dict = [{"label": "Select All", "value": "ALL"}] + team_dict
 	    # All the season options
