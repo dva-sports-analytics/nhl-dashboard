@@ -45,7 +45,7 @@ team_dict, shot_type, periods, seasons = dp.create_dropdowns()
 #df['scored'] = df['event_type'].apply(lambda event: 1 if event == "GOAL" else 0)
 #df['is_rebound_attempt'] = df['time_since_last_shot'].apply(lambda x: True if x <= 5 else False)
 #df['shot_type'] = df['shot_type'].apply(lambda x: 'Wrist Shot' if pd.isna(x) else x)
-#df['season'] = df['game_id'].astype(str).str[:4].astype(int)
+df['season'] = df['game_id'].astype(str).str[:4].astype(int)
 
 #------------------------------------------------------------------------------------------------------------
 # Init of Vis class
