@@ -82,6 +82,7 @@ class RFClassifier():
                                                             test_size=test_size, random_state=42)
         columns = X_train.columns
 
+<<<<<<< HEAD
         oversample = SMOTE(random_state=42)
 
         X_train, y_train = oversample.fit_resample(X_train, y_train)
@@ -161,18 +162,22 @@ def DTmodel():
     hockey_rink_rev = base64.b64encode(open(hockey_rink_rev_filepath, 'rb').read())
     df = pd.read_csv('./data/shots.csv')
     df.rename(columns={"result.secondaryType": "shot_type", "team.triCode": "team"}, inplace=True)
+=======
+    df = pd.read_csv('./data/shots-2017-2020.csv')
+    #df.rename(columns={"result.secondaryType": "shot_type", "team.triCode": "team"}, inplace=True)
+>>>>>>> origin/Removing-Shots
 
-    df['scored'] = df['event_type'].apply(lambda event: 1 if event == "GOAL" else 0)
-    df['is_rebound_attempt'] = df['time_since_last_shot'].apply(lambda x: True if x <= 5 else False)
-    df['shot_type'] = df['shot_type'].apply(lambda x: 'Wrist Shot' if pd.isna(x) else x)
+    #df['scored'] = df['event_type'].apply(lambda event: 1 if event == "GOAL" else 0)
+    #df['is_rebound_attempt'] = df['time_since_last_shot'].apply(lambda x: True if x <= 5 else False)
+    #df['shot_type'] = df['shot_type'].apply(lambda x: 'Wrist Shot' if pd.isna(x) else x)
     
     df.loc[df.period <= 3, "total_time_remaining"] = (3 - df.loc[df.period <= 3]['period']) * 1200 + df.loc[df.period <= 3]['period_time_remaining']
     df.loc[df.period > 3, "total_time_remaining"] = 0
 
     scaler = MinMaxScaler()
-    scaler.fit(df[['period_time_remaining', 'distance_to_goal', 'coordinates.x', "coordinates.y", 'total_time_remaining', 'time_of_last_shot', 'time_since_last_shot']])
-    df[['period_time_remaining', 'distance_to_goal', 'coordinates.x', "coordinates.y", 'total_time_remaining', 'time_of_last_shot', 'time_since_last_shot']] = scaler.transform(
-        df[['period_time_remaining', 'distance_to_goal', 'coordinates.x', "coordinates.y", 'total_time_remaining', 'time_of_last_shot', 'time_since_last_shot']])
+    scaler.fit(df[['period_time_remaining', 'distance_to_goal', 'x_coordinates', "y_coordinates", 'total_time_remaining', 'time_of_last_shot', 'time_since_last_shot']])
+    df[['period_time_remaining', 'distance_to_goal', 'x_coordinates', "y_coordinates", 'total_time_remaining', 'time_of_last_shot', 'time_since_last_shot']] = scaler.transform(
+        df[['period_time_remaining', 'distance_to_goal', 'x_coordinates', "y_coordinates", 'total_time_remaining', 'time_of_last_shot', 'time_since_last_shot']])
 
     cat_vars=['team', 'shot_type','is_rebound_attempt']
     for var in cat_vars:
@@ -185,8 +190,8 @@ def DTmodel():
     to_keep=[i for i in data_vars if i not in cat_vars]
 
     df = df[to_keep]
-    df = df[['period', 'period_time_remaining', 'coordinates.x',
-           'coordinates.y', 'distance_to_goal',
+    df = df[['period', 'period_time_remaining', 'x_coordinates',
+           'y_coordinates', 'distance_to_goal',
            'time_of_last_shot', 'time_since_last_shot',
            'scored', 'total_time_remaining', 'team_ANA', 'team_ARI',
            'team_BOS', 'team_BUF', 'team_CAR', 'team_CBJ', 'team_CGY',
@@ -200,7 +205,7 @@ def DTmodel():
            'shot_type_Wrist Shot', 'is_rebound_attempt_False',
            'is_rebound_attempt_True']]
 
-    df = df.dropna(subset=['time_since_last_shot', 'time_of_last_shot'])
+    df = df.dropna(subset=['time_since_last_shot', 'time_of_last_shot', 'x_coordinates', 'y_coordinates', 'distance_to_goal'])
     X_train, X_test, y_train, y_test = train_test_split(df.loc[:, df.columns != 'scored'], df[['scored']], test_size=0.33, random_state=42)
     columns = X_train.columns
 
@@ -219,7 +224,7 @@ def DTmodel():
     con_mat = confusion_matrix(y_test, pred)
     print("Predictive Value:")
     specificity = con_mat[1][1] / (con_mat[1][1] + con_mat[0][1])
-
+    print(specificity)
     Z_probs = clf.predict_proba(X_test)
     X_test_final = X_test.copy()
     X_test_final['scoreProb'] = [i[1] for i in Z_probs]
@@ -229,8 +234,8 @@ def DTmodel():
     score_probs = go.Figure()
 
     score_probs.add_trace(go.Histogram2dContour(
-            x=X_test_final["coordinates.x"],
-            y=X_test_final["coordinates.y"],
+            x=X_test_final["x_coordinates"],
+            y=X_test_final["y_coordinates"],
             z =X_test_final["scoreProb"]*specificity,
             colorscale = 'Thermal',
             xaxis = 'x',
@@ -243,8 +248,8 @@ def DTmodel():
             ))
 
     score_probs.add_trace(go.Bar(
-            y = X_test_final.groupby('coordinates.y').agg({'scoreProb': 'mean'}).reset_index()['coordinates.y'],
-            x = X_test_final.groupby('coordinates.y').agg({'scoreProb': 'mean'}).reset_index()["scoreProb"]*.15,
+            y = X_test_final.groupby('y_coordinates').agg({'scoreProb': 'mean'}).reset_index()['y_coordinates'],
+            x = X_test_final.groupby('y_coordinates').agg({'scoreProb': 'mean'}).reset_index()["scoreProb"]*.15,
             xaxis = 'x2',
             orientation='h',
             marker = dict(
@@ -255,7 +260,7 @@ def DTmodel():
         ))
 
     score_probs.add_trace(go.Histogram(
-            x = X_test_final["coordinates.x"],
+            x = X_test_final["x_coordinates"],
             y = X_test_final["scoreProb"]*specificity,
             histfunc = 'avg',
             yaxis = 'y2',
