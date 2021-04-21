@@ -5,14 +5,14 @@ import os
 
 class DataProcessing():
 
-	def __init__(self, filepath = './data/shots.csv'):
+	def __init__(self, filepath = './data/shots-2017-2020.csv'):
 		print('init data processing')
 		self.filepath = filepath
 
 	def load_data(self):
 		print(f'loading file {self.filepath}')
 		self.df = pd.read_csv(self.filepath)
-		self.df.rename(columns={"result.secondaryType": "shot_type", "team.triCode": "team"}, inplace=True)
+		#self.df.rename(columns={"result.secondaryType": "shot_type", "team.triCode": "team"}, inplace=True)
 		return self.df
 	def create_dropdowns(self):
 	    # All the unique Team codes + Select All button for sidebar dropdown
@@ -24,7 +24,7 @@ class DataProcessing():
 	    shot_type = [{"label": shot_type, "value": shot_type} for shot_type in self.df['shot_type'].unique() if not pd.isna(shot_type)]
 	    shot_type = [{"label": "Select All", "value": "ALL"}] + shot_type
 	    # All the Period Options
-	    periods = [{"label": period, "value": period} for period in self.df['period'].unique() if not pd.isna(period) and period <= 3]
+	    periods = [{"label": str(period), "value": str(period)} for period in self.df['period'].unique() if not pd.isna(period) and int(period) <= 3]
 	    periods = [{"label": "Select All", "value": "ALL"}] + periods + [{"label": "Overtime", "value": "OT"}]
 	    return team_dict, shot_type, periods, seasons
 
@@ -33,7 +33,7 @@ class DataProcessing():
 if __name__ == '__main__':
 	print('Testing Data Processing')
 
-	dp = DataProcessing(filepath='../data/shots.csv')
+	dp = DataProcessing(filepath='../data/shots-2017-2020.csv')
 	df = dp.load_data()
 	print(df.head())
 	team_dict, shot_type, periods, seasons = dp.create_dropdowns()

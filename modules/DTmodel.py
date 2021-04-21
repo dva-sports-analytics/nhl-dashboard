@@ -25,13 +25,14 @@ def DTmodel():
     df['scored'] = df['event_type'].apply(lambda event: 1 if event == "GOAL" else 0)
     df['is_rebound_attempt'] = df['time_since_last_shot'].apply(lambda x: True if x <= 5 else False)
     df['shot_type'] = df['shot_type'].apply(lambda x: 'Wrist Shot' if pd.isna(x) else x)
-
+    
     df.loc[df.period <= 3, "total_time_remaining"] = (3 - df.loc[df.period <= 3]['period']) * 1200 + df.loc[df.period <= 3]['period_time_remaining']
     df.loc[df.period > 3, "total_time_remaining"] = 0
 
     scaler = MinMaxScaler()
     scaler.fit(df[['period_time_remaining', 'distance_to_goal', 'coordinates.x', "coordinates.y", 'total_time_remaining', 'time_of_last_shot', 'time_since_last_shot']])
-    df[['period_time_remaining', 'distance_to_goal', 'coordinates.x', "coordinates.y", 'total_time_remaining', 'time_of_last_shot', 'time_since_last_shot']] = scaler.transform(df[['period_time_remaining', 'distance_to_goal', 'coordinates.x', "coordinates.y", 'total_time_remaining', 'time_of_last_shot', 'time_since_last_shot']])
+    df[['period_time_remaining', 'distance_to_goal', 'coordinates.x', "coordinates.y", 'total_time_remaining', 'time_of_last_shot', 'time_since_last_shot']] = scaler.transform(
+        df[['period_time_remaining', 'distance_to_goal', 'coordinates.x', "coordinates.y", 'total_time_remaining', 'time_of_last_shot', 'time_since_last_shot']])
 
     cat_vars=['team', 'shot_type','is_rebound_attempt']
     for var in cat_vars:

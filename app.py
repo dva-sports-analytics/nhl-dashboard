@@ -32,21 +32,19 @@ sourceurl='http://www.nhl.com/stats/'
 image_filename = 'assets/National_Hockey_League_shield.svg'
 decisionTree_path = 'assets/ShotAnalysisDecisionTree.svg'
 
-dp = DataProcessing(filepath='./data/shots.csv')
+dp = DataProcessing(filepath='./data/shots-2017-2020.csv')
 
-# df = pd.read_csv('data/shots.csv')
 df = dp.load_data()
-# df.rename(columns={"result.secondaryType": "shot_type", "team.triCode": "team"}, inplace=True)
 team_dict, shot_type, periods, seasons = dp.create_dropdowns()
 #------------------------------------------------------------------------------------------------------------
 
 ## Hockey Dataframe
 # I took the data manipulation done by James/Brent to get the data in quickly
 
-df.rename(columns={"result.secondaryType": "shot_type", "team.triCode": "team"}, inplace=True)
-df['scored'] = df['event_type'].apply(lambda event: 1 if event == "GOAL" else 0)
-df['is_rebound_attempt'] = df['time_since_last_shot'].apply(lambda x: True if x <= 5 else False)
-df['shot_type'] = df['shot_type'].apply(lambda x: 'Wrist Shot' if pd.isna(x) else x)
+#df.rename(columns={"result.secondaryType": "shot_type", "team.triCode": "team"}, inplace=True)
+#df['scored'] = df['event_type'].apply(lambda event: 1 if event == "GOAL" else 0)
+#df['is_rebound_attempt'] = df['time_since_last_shot'].apply(lambda x: True if x <= 5 else False)
+#df['shot_type'] = df['shot_type'].apply(lambda x: 'Wrist Shot' if pd.isna(x) else x)
 df['season'] = df['game_id'].astype(str).str[:4].astype(int)
 
 #------------------------------------------------------------------------------------------------------------
@@ -306,8 +304,8 @@ def update_shot_distribution(data):
     shots = go.Figure()
 
     shots.add_trace(go.Histogram2dContour(
-            x=df["coordinates.x"],
-            y=df["coordinates.y"],
+            x=df["x_coordinates"],
+            y=df["y_coordinates"],
             z =df["scored"],
             colorscale = 'Thermal',
             xaxis = 'x',
@@ -319,7 +317,7 @@ def update_shot_distribution(data):
             ))
     
     shots.add_trace(go.Histogram(
-            y = df["coordinates.y"],
+            y = df["y_coordinates"],
             xaxis = 'x2',
             marker = dict(
                 color = 'rgba(0,0,0,1)'
@@ -328,7 +326,7 @@ def update_shot_distribution(data):
         ))
     
     shots.add_trace(go.Histogram(
-            x = df["coordinates.x"],
+            x = df["x_coordinates"],
             yaxis = 'y2',
             marker = dict(
                 color = 'rgba(0,0,0,1)'
@@ -406,8 +404,8 @@ def update_score_distribution(data):
     score_dist = go.Figure()
     
     score_dist.add_trace(go.Histogram2dContour(
-            x=df["coordinates.x"],
-            y=df["coordinates.y"],
+            x=df["x_coordinates"],
+            y=df["y_coordinates"],
             z =df["scored"],
             colorscale = 'Thermal',
             xaxis = 'x',
@@ -420,7 +418,7 @@ def update_score_distribution(data):
             ))
     
     score_dist.add_trace(go.Histogram(
-            y = df.loc[df["scored"] == 1]["coordinates.y"],
+            y = df.loc[df["scored"] == 1]["y_coordinates"],
             xaxis = 'x2',
             
             marker = dict(
@@ -430,7 +428,7 @@ def update_score_distribution(data):
         ))
     
     score_dist.add_trace(go.Histogram(
-            x = df.loc[df["scored"] == 1]["coordinates.x"],
+            x = df.loc[df["scored"] == 1]["x_coordinates"],
             yaxis = 'y2',
             marker = dict(
                 color = 'rgba(0,0,0,1)'

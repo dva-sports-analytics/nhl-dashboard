@@ -48,8 +48,8 @@ class Visualizations():
 		shots = go.Figure()
 
 		shots.add_trace(go.Histogram2dContour(
-			x=self.df["coordinates.x"],
-			y=self.df["coordinates.y"],
+			x=self.df["x_coordinates"],
+			y=self.df["y_coordinates"],
 			z=self.df["scored"],
 			colorscale='Thermal',
 			xaxis='x',
@@ -61,7 +61,7 @@ class Visualizations():
 		))
 
 		shots.add_trace(go.Histogram(
-			y=self.df["coordinates.y"],
+			y=self.df["y_coordinates"],
 			xaxis='x2',
 			marker=dict(
 				color='rgba(0,0,0,1)'
@@ -70,7 +70,7 @@ class Visualizations():
 		))
 
 		shots.add_trace(go.Histogram(
-			x=self.df["coordinates.x"],
+			x=self.df["x_coordinates"],
 			yaxis='y2',
 			marker=dict(
 				color='rgba(0,0,0,1)'
@@ -140,8 +140,8 @@ class Visualizations():
 		score_dist = go.Figure()
 
 		score_dist.add_trace(go.Histogram2dContour(
-			x=self.df["coordinates.x"],
-			y=self.df["coordinates.y"],
+			x=self.df["x_coordinates"],
+			y=self.df["y_coordinates"],
 			z=self.df["scored"],
 			colorscale='Thermal',
 			xaxis='x',
@@ -154,7 +154,7 @@ class Visualizations():
 		))
 
 		score_dist.add_trace(go.Histogram(
-			y=self.df.loc[self.df["scored"] == 1]["coordinates.y"],
+			y=self.df.loc[self.df["scored"] == 1]["y_coordinates"],
 			xaxis='x2',
 
 			marker=dict(
@@ -164,7 +164,7 @@ class Visualizations():
 		))
 
 		score_dist.add_trace(go.Histogram(
-			x=self.df.loc[self.df["scored"] == 1]["coordinates.x"],
+			x=self.df.loc[self.df["scored"] == 1]["x_coordinates"],
 			yaxis='y2',
 			marker=dict(
 				color='rgba(0,0,0,1)'
