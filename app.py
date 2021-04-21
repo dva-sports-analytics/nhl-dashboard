@@ -1,17 +1,16 @@
 import dash
-import dash_core_components as dcc
 import dash_bootstrap_components as dbc
+import dash_core_components as dcc
 import dash_html_components as html
 import dash_table
-import plotly.graph_objs as go
-import numpy as np
 import pandas as pd
 import plotly.express as px
-from datetime import date
-import base64
+import plotly.graph_objs as go
+
+from modules.DTmodel import RFClassifier
 from modules.data_processing import DataProcessing
 from modules.visualizations import Visualizations
-from modules.DTmodel import  RFClassifier
+
 # ---------------------------------------
 # To-Do:
 # - Connect to Snowflake Data

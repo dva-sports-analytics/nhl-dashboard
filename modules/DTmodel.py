@@ -1,16 +1,13 @@
-from sklearn.preprocessing import MinMaxScaler
-import numpy as np
-import pandas as pd
-import matplotlib.pyplot as plt
-from matplotlib.colors import ListedColormap
-from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import StandardScaler
-from sklearn.tree import DecisionTreeClassifier
+import base64
 import pickle
+
+import pandas as pd
+import plotly.graph_objs as go
 from imblearn.over_sampling import SMOTE
 from sklearn.metrics import confusion_matrix
-import plotly.graph_objs as go
-import base64
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import MinMaxScaler
+from sklearn.tree import DecisionTreeClassifier
 
 
 # hockey_rink_rev_filepath = '../assets/Half_ice_hockey_rink_rev.png'
