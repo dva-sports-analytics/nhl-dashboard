@@ -29,7 +29,7 @@ myheading='Hockey Analytics'
 githublink='https://github.com/dva-sports-analytics/nhl-dashboard'
 sourceurl='http://www.nhl.com/stats/'
 image_filename = 'assets/National_Hockey_League_shield.svg'
-
+decisionTree_path = 'assets/ShotAnalysisDecisionTree.svg'
 
 dp = DataProcessing(filepath='./data/shots.csv')
 
@@ -168,8 +168,16 @@ content = html.Div([dbc.Spinner(children = [
             dbc.Row([
                 
                 dbc.Col(dcc.Graph(id='score_Distribution', figure=score_dist)),
-                dbc.Col(dcc.Graph(id='shotDistribution', figure=shots))
+                dbc.Col(dcc.Graph(id='shotDistribution', figure=shots)),
                 
+                ####### --------------------------------------------
+                #########################################################
+                #########################################################
+                # Decision Tree SVG
+                html.Center(html.Img(src=decisionTree_path, style = {"height":'40%', "width":"90%"}))
+                #########################################################
+                #########################################################
+                #######--------------------------------------------
             ])
     
         ]),
