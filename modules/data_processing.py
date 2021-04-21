@@ -5,14 +5,14 @@ import os
 
 class DataProcessing():
 
-	def __init__(self, filepath = './data/shots.csv'):
+	def __init__(self, filepath = './data/shots-2017-2020.csv'):
 		print('init data processing')
 		self.filepath = filepath
 
 	def load_data(self):
 		print(f'loading file {self.filepath}')
 		self.df = pd.read_csv(self.filepath)
-		self.df.rename(columns={"result.secondaryType": "shot_type", "team.triCode": "team"}, inplace=True)
+		#self.df.rename(columns={"result.secondaryType": "shot_type", "team.triCode": "team"}, inplace=True)
 		return self.df
 	def create_dropdowns(self):
 	    # All the unique Team codes + Select All button for sidebar dropdown
