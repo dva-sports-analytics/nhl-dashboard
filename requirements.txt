@@ -29,3 +29,5 @@ six
 traitlets
 Werkzeug
 datetime
+imblearn
+matplotlib
