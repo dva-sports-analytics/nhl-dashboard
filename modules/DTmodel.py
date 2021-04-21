@@ -19,19 +19,20 @@ hockey_rink_rev_filepath = 'assets/Half_ice_hockey_rink_rev.png'
 hockey_rink_rev = base64.b64encode(open(hockey_rink_rev_filepath, 'rb').read())
 def DTmodel():
 
-    df = pd.read_csv('./data/shots.csv')
-    df.rename(columns={"result.secondaryType": "shot_type", "team.triCode": "team"}, inplace=True)
+    df = pd.read_csv('./data/shots-2017-2020.csv')
+    #df.rename(columns={"result.secondaryType": "shot_type", "team.triCode": "team"}, inplace=True)
 
-    df['scored'] = df['event_type'].apply(lambda event: 1 if event == "GOAL" else 0)
-    df['is_rebound_attempt'] = df['time_since_last_shot'].apply(lambda x: True if x <= 5 else False)
-    df['shot_type'] = df['shot_type'].apply(lambda x: 'Wrist Shot' if pd.isna(x) else x)
+    #df['scored'] = df['event_type'].apply(lambda event: 1 if event == "GOAL" else 0)
+    #df['is_rebound_attempt'] = df['time_since_last_shot'].apply(lambda x: True if x <= 5 else False)
+    #df['shot_type'] = df['shot_type'].apply(lambda x: 'Wrist Shot' if pd.isna(x) else x)
 
     df.loc[df.period <= 3, "total_time_remaining"] = (3 - df.loc[df.period <= 3]['period']) * 1200 + df.loc[df.period <= 3]['period_time_remaining']
     df.loc[df.period > 3, "total_time_remaining"] = 0
 
     scaler = MinMaxScaler()
     scaler.fit(df[['period_time_remaining', 'distance_to_goal', 'x_coordinates', "y_coordinates", 'total_time_remaining', 'time_of_last_shot', 'time_since_last_shot']])
-    df[['period_time_remaining', 'distance_to_goal', 'x_coordinates', "y_coordinates", 'total_time_remaining', 'time_of_last_shot', 'time_since_last_shot']] = scaler.transform(df[['period_time_remaining', 'distance_to_goal', 'coordinates.x', "coordinates.y", 'total_time_remaining', 'time_of_last_shot', 'time_since_last_shot']])
+    df[['period_time_remaining', 'distance_to_goal', 'x_coordinates', "y_coordinates", 'total_time_remaining', 'time_of_last_shot', 'time_since_last_shot']] = scaler.transform(
+        df[['period_time_remaining', 'distance_to_goal', 'x_coordinates', "y_coordinates", 'total_time_remaining', 'time_of_last_shot', 'time_since_last_shot']])
 
     cat_vars=['team', 'shot_type','is_rebound_attempt']
     for var in cat_vars:
