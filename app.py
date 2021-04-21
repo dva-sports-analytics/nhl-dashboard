@@ -11,7 +11,7 @@ from datetime import date
 import base64
 from modules.data_processing import DataProcessing
 from modules.visualizations import Visualizations
-from modules.DTmodel import DTmodel
+from modules.DTmodel import  RFClassifier
 # ---------------------------------------
 # To-Do:
 # - Connect to Snowflake Data
@@ -65,7 +65,11 @@ shots = vis.shot_distribution_heatmap()
 
 score_dist = vis.score_distribution_heatmap()
 #------------------------------------------------------------------------------------------------------------
-
+# Model Random Forest
+rf = RFClassifier()
+rf.load_model()
+rf.predict()
+dt_model = rf.plot_heatmap()
 #Set Up dashboard ------------------------------------------------------------------------------------------:
 
 
@@ -157,7 +161,7 @@ sidebar = html.Div(children=[
     )
     
 #Content-----------------------------------------------------------------------------------------------------:   
-dt_model = DTmodel()
+
 content = html.Div([dbc.Spinner(children = [
 #Viz Tab-------------------------------------------------------------------------------------------------:
     dcc.Tabs([
@@ -495,5 +499,5 @@ def update_score_distribution(data):
     return score_dist
 
 if __name__ == '__main__':
-    # app.run_server()
-    dt = DTmodel()
+    app.run_server()
+    # dt = DTmodel()
