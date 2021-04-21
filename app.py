@@ -11,6 +11,7 @@ from datetime import date
 import base64
 from modules.data_processing import DataProcessing
 from modules.visualizations import Visualizations
+from modules.DTmodel import DTmodel
 # ---------------------------------------
 # To-Do:
 # - Connect to Snowflake Data
@@ -29,7 +30,7 @@ myheading='Hockey Analytics'
 githublink='https://github.com/dva-sports-analytics/nhl-dashboard'
 sourceurl='http://www.nhl.com/stats/'
 image_filename = 'assets/National_Hockey_League_shield.svg'
-
+decisionTree_path = 'assets/ShotAnalysisDecisionTree.svg'
 
 dp = DataProcessing(filepath='./data/shots.csv')
 
@@ -158,12 +159,12 @@ sidebar = html.Div(children=[
     )
     
 #Content-----------------------------------------------------------------------------------------------------:   
-
+dt_model = DTmodel()
 content = html.Div([dbc.Spinner(children = [
 #Viz Tab-------------------------------------------------------------------------------------------------:
     dcc.Tabs([
         dcc.Tab(label='Visualizations', children=[
-            dbc.Row(dbc.Col(dcc.Graph(id='shotType', figure=shot_type_Bar)
+            dbc.Row(dbc.Col(dcc.Graph(id='shotType', figure=shot_type_Bar) #
             )),
             dbc.Row([
                 
@@ -172,6 +173,17 @@ content = html.Div([dbc.Spinner(children = [
                 
             ])
     
+        ]),
+# Predictive Models -------------------------------------------------------------------------------------------------:
+        dcc.Tab(label="Predictive Models" , children=[
+           # TODO: Add in the predictive models in here
+
+            html.Img(src=decisionTree_path, style = {"height":'60%', "width":"95%"}),
+            html.Br(),
+            # SVG on the top with the predictive models below
+            dcc.Graph(id='score_Pred1', figure=dt_model, style = {"height":'90%', "width":"95%","margin-left":"auto","margin-right":"auto"})
+            # dbc.Col(dcc.Graph(id='shot_pred2', figure=shots))
+
         ]),
 #Data Tab-------------------------------------------------------------------------------------------------:        
         dcc.Tab(label='Data', children=[
