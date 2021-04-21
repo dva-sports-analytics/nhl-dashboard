@@ -29,6 +29,7 @@ six
 traitlets
 Werkzeug
 datetime
+pickle
 imblearn
 <<<<<<< HEAD
 matplotlib

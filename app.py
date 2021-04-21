@@ -495,4 +495,5 @@ def update_score_distribution(data):
     return score_dist
 
 if __name__ == '__main__':
-    app.run_server()
+    # app.run_server()
+    dt = DTmodel()
