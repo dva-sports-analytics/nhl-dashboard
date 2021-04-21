@@ -29,7 +29,7 @@ six
 traitlets
 Werkzeug
 datetime
-pickle
+# pickle
 imblearn
 matplotlib
 
