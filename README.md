@@ -22,6 +22,12 @@ The Hockey Analytics Dashboard can be used by navigating to the `app.py` file us
 ### Mostly works
 You may also navigate to <https://nhl-analysis.herokuapp.com/> and access the dashboard hosted online.
 
-## Contact
+### Running Locally 
+Requirments: Python 3.7 
+1. Download or clone the repo and unzip it if needed 
+2. Open a command prompt or terminal at the projects top level 
+3. Install the requirments using pip install -f requirments.txt
+4. Run app.py file "python app.py" in terminal 
+5. Open browser and go to http://127.0.0.1:8050/
 
 For any questions or inquiries you may contact the creators 
