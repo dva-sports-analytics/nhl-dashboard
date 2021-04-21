@@ -10,7 +10,7 @@ import plotly.graph_objs as go
 from modules.DTmodel import RFClassifier
 from modules.data_processing import DataProcessing
 from modules.visualizations import Visualizations
-
+from dash.dependencies import Input,State, Output
 # ---------------------------------------
 # To-Do:
 # - Connect to Snowflake Data
@@ -77,7 +77,7 @@ dt_model = rf.plot_heatmap()
 
 ########### Initiate the app
 external_stylesheets = ['https://stackpath.bootstrapcdn.com/bootswatch/4.5.2/flatly/bootstrap.min.css']
-app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
+app = dash.Dash(__name__, external_stylesheets=[external_stylesheets,'./css/style.css'])
 server = app.server
 app.title=tabtitle
 
@@ -128,7 +128,7 @@ sidebar = html.Div(children=[
         id='team-filter',
         options= team_dict,
         value = [],
-                 ## ADD SELECT ALL--------------------------------------------------------------------------------+++
+ ## ADD SELECT ALL--------------------------------------------------------------------------------+++
         multi=True
     ),
     html.Div(id='dd-output-container'),
@@ -149,6 +149,10 @@ sidebar = html.Div(children=[
         value = [],
         multi=True
     ),
+    html.Br(),
+    html.Button(id='submit-button',
+                children='Refresh',
+                ),
 
     #Bottom of Sidebar
     html.Br(),
@@ -162,16 +166,16 @@ sidebar = html.Div(children=[
     
 #Content-----------------------------------------------------------------------------------------------------:   
 
-content = html.Div([dbc.Spinner(children = [
+content = html.Div( [dbc.Spinner(children = [
 #Viz Tab-------------------------------------------------------------------------------------------------:
     dcc.Tabs([
         dcc.Tab(label='Visualizations', children=[
-            dbc.Row(dbc.Col(dcc.Graph(id='shotType', figure=shot_type_Bar) #
+            dbc.Row(dbc.Col(dcc.Graph(id='shotType', figure=shot_type_Bar, style={"margin-left":"auto","margin-right":"auto"}) #
             )),
             dbc.Row([
                 
                 dbc.Col(dcc.Graph(id='score_Distribution', figure=score_dist)),
-                dbc.Col(dcc.Graph(id='shotDistribution', figure=shots))
+                dbc.Col(dcc.Graph(id='shotDistribution', figure=shots))#style={"margin-left":"auto","margin-right":"auto"}
                 
             ])
     
@@ -180,10 +184,10 @@ content = html.Div([dbc.Spinner(children = [
         dcc.Tab(label="Predictive Models" , children=[
            # TODO: Add in the predictive models in here
 
-            html.Img(src=decisionTree_path, style = {"height":'60%', "width":"95%"}),
+            html.Img(src=decisionTree_path, style = {"height":'90%', "width":"95%","margin-left":"auto","margin-right":"auto"}),
             html.Br(),
             # SVG on the top with the predictive models below
-            dcc.Graph(id='score_Pred1', figure=dt_model, style = {"height":'90%', "width":"95%","margin-left":"auto","margin-right":"auto"})
+            dcc.Graph(id='score_Pred1', figure=dt_model, style = {"height":'90%', "width":"95%","margin-left":"20%","margin-right":"20%"})
             # dbc.Col(dcc.Graph(id='shot_pred2', figure=shots))
 
         ]),
@@ -226,53 +230,87 @@ app.layout = html.Div([content, sidebar])
 
 # Updating Values:
 @app.callback(
-    dash.dependencies.Output('datatable-row-ids', 'data'),
-    [dash.dependencies.Input('year-filter', 'value'),
-     dash.dependencies.Input('team-filter', 'value'),
-     dash.dependencies.Input('shot-type-filter', 'value'),
-     dash.dependencies.Input('period-filter', 'value'),])
+    Output('datatable-row-ids', 'data'),
+    # [Input('submit-button', 'n_clicks')],
+    [Input('year-filter', 'value'),
+     Input('team-filter', 'value'),
+     Input('shot-type-filter', 'value'),
+     Input('period-filter', 'value')])
 def filter_data(year, team, shot_type, period):
-    
+    print(f'year: {year[0],year[1]} team:{team} shot_type:{shot_type} period:{period}')
+    print(f'year: {year[0],year[1]} team:{len(team)} shot_type:{len(shot_type)} period:{len(period)})')
+    print(type(year[0]))
+    if (year == [2017, 2019]):
+        print('Year range at init values')
+        # filtered_df = df.copy()
+        # filtered_df = filter_data(filtered_df, year, team, period)
+        # update_shot_type(filtered_df)
+        # update_score_distribution(filtered_df)
+        # update_shot_distribution(filtered_df)
+
+        if (len(team) ==0 & len(shot_type) == 0 & len(period)==0):
+            print(f'No need to filter data')
+        else:
+            print('filtering Data...')
+            #
+            filtered_df = df.copy()
+            filtered_df = filter_data(filtered_df,year,team,period)
+            update_shot_type(filtered_df)
+            update_score_distribution(filtered_df)
+            update_shot_distribution(filtered_df)
+            return filtered_df#.to_dict('records')
+    else:
+        print("Data Range changed Filtering data")
+        filtered_df = df.copy()
+        filtered_df = filter_data(filtered_df, year, team, period)
+        update_shot_type(filtered_df)
+        update_score_distribution(filtered_df)
+        update_shot_distribution(filtered_df)
+        return filtered_df
+
+def filter_data(df,year,team,period):
     filtered_df = df.copy()
-    
-    #year filter
+
+    # year filter
     min_season = min(year)
     max_season = max(year)
-    
+
     filtered_df = filtered_df.loc[(df.season >= min_season) & (df.season <= max_season)]
-    
-    #team filter
-    
-    if 'ALL' in str(team) or set(team) == set([teams for teams in df['team'].unique() if not pd.isna(teams)]) or team == []:
+
+    # team filter
+
+    if 'ALL' in str(team) or set(team) == set(
+            [teams for teams in df['team'].unique() if not pd.isna(teams)]) or team == []:
         pass
     else:
         filtered_df = filtered_df[df.team.isin(team)]
-    
-    #Shot Type Filter    
-    
-    if 'ALL' in str(shot_type) or set(shot_type) == set([shots for shots in df['shot_type'].unique() if not pd.isna(shots)]) or shot_type == []:
+
+    # Shot Type Filter
+
+    if 'ALL' in str(shot_type) or set(shot_type) == set(
+            [shots for shots in df['shot_type'].unique() if not pd.isna(shots)]) or shot_type == []:
         pass
     else:
         filtered_df = filtered_df[df.shot_type.isin(shot_type)]
-        
-    #Period Filter
-    if 'ALL' in str(period) or set(period) == set([period for period in df['period'].unique() if not pd.isna(period)]) or period == []:
+
+    # Period Filter
+    if 'ALL' in str(period) or set(period) == set(
+            [period for period in df['period'].unique() if not pd.isna(period)]) or period == []:
         pass
     elif 'OT' in str(period):
-        
+
         period.extend([4, 5, 6, 7, 8])
         filtered_df = filtered_df[df.period.isin(period)]
-        
+
     else:
         filtered_df = filtered_df[df.period.isin(period)]
-        
     return filtered_df.to_dict('records')
-
 #Updating Shot Graph:
-@app.callback(
-    dash.dependencies.Output('shotType', 'figure'),
-    [dash.dependencies.Input('datatable-row-ids', 'data')])
-def update_shot_type(data):   
+# @app.callback(
+#     dash.dependencies.Output('shotType', 'figure'),
+#     [dash.dependencies.Input('datatable-row-ids', 'data')])
+def update_shot_type(data):
+    print(f'Updating shot type')
     df = pd.DataFrame(data)
     select_df = df[['game_id', 'team', 'scored', 'distance_to_goal', 'shot_type', 'is_rebound_attempt']]
 
@@ -297,11 +335,12 @@ def update_shot_type(data):
                   
     return shot_type_Bar
 
-#Updating Shot Graph:
-@app.callback(
-    dash.dependencies.Output('shotDistribution', 'figure'),
-    [dash.dependencies.Input('datatable-row-ids', 'data')])
+# #Updating Shot Graph:
+# @app.callback(
+#     dash.dependencies.Output('shotDistribution', 'figure'),
+#     [dash.dependencies.Input('datatable-row-ids', 'data')])
 def update_shot_distribution(data):   
+    print(f'Updating shot distribution')
     df = pd.DataFrame(data)
     
     #Recreate Dataframe
@@ -396,11 +435,11 @@ def update_shot_distribution(data):
 
 
 #Updating Shot Graph:
-@app.callback(
-    dash.dependencies.Output('score_Distribution', 'figure'),
-    [dash.dependencies.Input('datatable-row-ids', 'data')])
+# @app.callback(
+#     dash.dependencies.Output('score_Distribution', 'figure'),
+#     [dash.dependencies.Input('datatable-row-ids', 'data')])
 def update_score_distribution(data):   
-    
+    print(f'Updating score shot distribution')
     #Recreate Dataframe
     df = pd.DataFrame(data)
     

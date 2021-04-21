@@ -123,6 +123,7 @@ class Visualizations():
 				'xanchor': 'center',
 				'yanchor': 'top'}
 		)
+		shots.update_layout()
 		self.shots = shots
 		return self.shots
 
