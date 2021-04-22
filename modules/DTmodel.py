@@ -20,7 +20,7 @@ class DTClassifier():
 		print('init of Decision Tree Classifier')
 		self.hockey_rink_rev_filepath = 'assets/Half_ice_hockey_rink_rev.png'
 		#self.model_path = 'assets/decision_tree_clf_model.pkl'
-		self.data_filepath = './data/shots-2017-2020.csv'
+		#self.data_filepath = './data/shots-2017-2020.csv'
 
 	def plot_heatmap(self):
 	  
