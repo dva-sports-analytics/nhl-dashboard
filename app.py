@@ -192,28 +192,28 @@ content = html.Div( [dbc.Spinner(children = [
 
         ])
 #Data Tab-------------------------------------------------------------------------------------------------:        
-        # dcc.Tab(label='Data', children=[
-        #     html.Br(),
-        #     dash_table.DataTable(
-        #         id='datatable-row-ids',
-        #         columns=[
-        #             {'name': i, 'id': i, 'deletable': False} for i in df.columns
-        #             # omit the id column
-        #             if i != 'id'
-        #         ],
-        #         data=df.to_dict('records'),
-        #         editable=False,
-        #         filter_action="native",
-        #         sort_action="native",
-        #         sort_mode='multi',
-        #         row_selectable='multi',
-        #         row_deletable=False,
-        #         selected_rows=[],
-        #         page_action='native',
-        #         page_current= 0,
-        #         page_size= 23,
-        #     )
-        # ])
+         dcc.Tab(label='Data', children=[
+             html.Br(),
+             dash_table.DataTable(
+                 id='datatable-row-ids',
+                 columns=[
+                     {'name': i, 'id': i, 'deletable': False} for i in df.columns
+                     # omit the id column
+                     if i != 'id'
+                 ],
+                 data=df.to_dict('records'),
+                 editable=False,
+                 filter_action="native",
+                 sort_action="native",
+                 sort_mode='multi',
+                 row_selectable='multi',
+                 row_deletable=False,
+                 selected_rows=[],
+                 page_action='native',
+                 page_current= 0,
+                 page_size= 23,
+             )
+         ])
     ])
     
     
@@ -305,10 +305,11 @@ def filter_data(df,year,team,period):
     else:
         filtered_df = filtered_df[df.period.isin(period)]
     return filtered_df.to_dict('records')
+
 #Updating Shot Graph:
-# @app.callback(
-#     dash.dependencies.Output('shotType', 'figure'),
-#     [dash.dependencies.Input('datatable-row-ids', 'data')])
+ @app.callback(
+     dash.dependencies.Output('shotType', 'figure'),
+     [dash.dependencies.Input('datatable-row-ids', 'data')])
 def update_shot_type(data):
     print(f'Updating shot type')
     df = pd.DataFrame(data)
@@ -335,10 +336,10 @@ def update_shot_type(data):
                   
     return shot_type_Bar
 
-# #Updating Shot Graph:
-# @app.callback(
-#     dash.dependencies.Output('shotDistribution', 'figure'),
-#     [dash.dependencies.Input('datatable-row-ids', 'data')])
+#Updating Shot Graph:
+@app.callback(
+     dash.dependencies.Output('shotDistribution', 'figure'),
+     [dash.dependencies.Input('datatable-row-ids', 'data')])
 def update_shot_distribution(data):   
     print(f'Updating shot distribution')
     df = pd.DataFrame(data)
@@ -435,9 +436,9 @@ def update_shot_distribution(data):
 
 
 #Updating Shot Graph:
-# @app.callback(
-#     dash.dependencies.Output('score_Distribution', 'figure'),
-#     [dash.dependencies.Input('datatable-row-ids', 'data')])
+@app.callback(
+     dash.dependencies.Output('score_Distribution', 'figure'),
+     [dash.dependencies.Input('datatable-row-ids', 'data')])
 def update_score_distribution(data):   
     print(f'Updating score shot distribution')
     #Recreate Dataframe
