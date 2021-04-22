@@ -31,7 +31,7 @@ sourceurl='http://www.nhl.com/stats/'
 image_filename = 'assets/National_Hockey_League_shield.svg'
 decisionTree_path = 'assets/ShotAnalysisDecisionTree.png'
 
-dp = DataProcessing(filepath='./data/shots-2017-2020.csv')
+dp = DataProcessing(filepath='data/shots-2017-2020_small.csv')
 
 df = dp.load_data()
 team_dict, shot_type, periods, seasons = dp.create_dropdowns()
