@@ -53,6 +53,7 @@ class DTClassifier():
 		self.Z_probs = self.clf.predict_proba(self.X_test)
 		self.X_test_final = self.X_test.copy()
 		self.X_test_final['scoreProb'] = [i[1] for i in self.Z_probs]
+		del self.X_test, self.y_test
 
 	def preprocess_data(self, loaded_df = None, test_size=0.33, loaded = True):
 		print(f'Preprocessing Data for decision tree...')
