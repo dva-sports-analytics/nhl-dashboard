@@ -31,6 +31,7 @@ class Visualizations():
 		                       title="Points by Shot Type",
 		                       hover_data=['Accuracy', 'Avg_Distance_to_Goal']) \
 			.update_xaxes(categoryorder="total descending")
+		
 		return self.shot_type_Bar
 
 	def shot_distribution_heatmap(self):
@@ -125,10 +126,10 @@ class Visualizations():
 		)
 		shots.update_layout()
 		self.shots = shots
+		del shots
 		return self.shots
 
 	def score_distribution_heatmap(self):
-
 
 		score_dist = go.Figure()
 
@@ -184,7 +185,7 @@ class Visualizations():
 				zeroline=False,
 				domain=[0.15, 1],
 				showticklabels=False,
-				# fixedrange = True,
+				fixedrange = True,
 				showgrid=False
 			),
 			yaxis=dict(
@@ -197,7 +198,7 @@ class Visualizations():
 			xaxis2=dict(
 				zeroline=False,
 				domain=[0, .15],
-				# fixedrange = True,
+				fixedrange = True,
 				showgrid=False
 			),
 			yaxis2=dict(
@@ -221,4 +222,20 @@ class Visualizations():
 		score_dist['layout']['xaxis2']['autorange'] = "reversed"
 		score_dist['layout']['xaxis']['autorange'] = "reversed"
 		self.score_dist = score_dist
+		del score_dist
 		return self.score_dist
+
+	def violin(self):
+		fig = px.violin(self.df[self.df.scored == 1], y="total_time_remaining", box = True, title = "Scores Throughout the Match")
+
+		fig.update_layout(
+			xaxis_title="KDE of Scores",
+			yaxis_title="Seconds Remaning",
+			height=600,
+			title={
+				"x": .5,
+				'xanchor':"center"
+			})
+		self.fig = fig
+		del fig
+		return self.fig

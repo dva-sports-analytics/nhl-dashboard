@@ -5,13 +5,15 @@ import os
 
 class DataProcessing():
 
-	def __init__(self, filepath = './data/shots-2017-2020.csv'):
+	def __init__(self, filepath = 'data/shots-2017-2020_small.csv'):
 		print('init data processing')
 		self.filepath = filepath
 
 	def load_data(self):
 		print(f'loading file {self.filepath}')
 		self.df = pd.read_csv(self.filepath)
+		self.df.loc[self.df.period <= 3, "total_time_remaining"] = (3 - self.df.loc[self.df.period <= 3]['period']) * 1200 +  self.df.loc[self.df.period <= 3]['period_time_remaining']
+		self.df.loc[self.df.period > 3, "total_time_remaining"] = 0
 		#self.df.rename(columns={"result.secondaryType": "shot_type", "team.triCode": "team"}, inplace=True)
 		return self.df
 	def create_dropdowns(self):
@@ -34,7 +36,7 @@ class DataProcessing():
 if __name__ == '__main__':
 	print('Testing Data Processing')
 
-	dp = DataProcessing(filepath='../data/shots-2017-2020.csv')
+	dp = DataProcessing(filepath='data/shots-2017-2020_small.csv')
 	df = dp.load_data()
 	print(df.head())
 	team_dict, shot_type, periods, seasons = dp.create_dropdowns()
