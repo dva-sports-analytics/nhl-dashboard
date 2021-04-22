@@ -63,11 +63,15 @@ shots = vis.shot_distribution_heatmap()
 ## Scoring Distribution Chart
 
 score_dist = vis.score_distribution_heatmap()
+
+## Violin Map
+violin = vis.violin()
+
 #------------------------------------------------------------------------------------------------------------
-# Model Random Forest
+# Model Decision Tree
 DT = DTClassifier()
-#rf.load_model()
-#rf.predict()
+#DT.load_model()
+#DT.predict()
 dt_model = DT.plot_heatmap()
 #Set Up dashboard ------------------------------------------------------------------------------------------:
 
@@ -77,7 +81,7 @@ dt_model = DT.plot_heatmap()
 
 ########### Initiate the app
 external_stylesheets = ['https://stackpath.bootstrapcdn.com/bootswatch/4.5.2/flatly/bootstrap.min.css']
-app = dash.Dash(__name__, external_stylesheets=[external_stylesheets,'./css/style.css'])
+app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
 server = app.server
 app.title=tabtitle
 
@@ -174,8 +178,9 @@ content = html.Div( [dbc.Spinner(children = [
             )),
             dbc.Row([
                 
-                dbc.Col(dcc.Graph(id='score_Distribution', figure=score_dist)),
-                dbc.Col(dcc.Graph(id='shotDistribution', figure=shots))#style={"margin-left":"auto","margin-right":"auto"}
+                dbc.Col(dcc.Graph(id='score_Distribution', figure=score_dist, style={"margin-left":"auto","margin-right":"1%"}), width = 5),
+                dbc.Col(dcc.Graph(id='violin', figure=violin, style={"margin-left":"1%","margin-right":"1%"}), width = 2),
+                dbc.Col(dcc.Graph(id='shotDistribution', figure=shots, style={"margin-left":"1%","margin-right":"auto"}), width = 5)
                 
             ])
     
@@ -312,8 +317,8 @@ def update_shot_distribution(data):
     shots = go.Figure()
 
     shots.add_trace(go.Histogram2dContour(
-            x=df["coordinates.x"],
-            y=df["coordinates.y"],
+            x=df["x_coordinates"],
+            y=df["y_coordinates"],
             z =df["scored"],
             colorscale = 'Thermal',
             xaxis = 'x',
@@ -325,7 +330,7 @@ def update_shot_distribution(data):
             ))
     
     shots.add_trace(go.Histogram(
-            y = df["coordinates.y"],
+            y = df["y_coordinates"],
             xaxis = 'x2',
             marker = dict(
                 color = 'rgba(0,0,0,1)'
@@ -334,7 +339,7 @@ def update_shot_distribution(data):
         ))
     
     shots.add_trace(go.Histogram(
-            x = df["coordinates.x"],
+            x = df["x_coordinates"],
             yaxis = 'y2',
             marker = dict(
                 color = 'rgba(0,0,0,1)'
@@ -398,7 +403,25 @@ def update_shot_distribution(data):
                   
     return shots
 
+@app.callback(
+    dash.dependencies.Output('violin', 'figure'),
+    [dash.dependencies.Input('datatable-row-ids', 'data')])
+def update_violin(data):
+    #Recreate Dataframe
+    df = pd.DataFrame(data)
+    
+    violin = px.violin(self.df[self.df.scored == 1], y="total_time_remaining", box = True, title = "Scores Throughout the Match")
 
+    violin.update_layout(
+        xaxis_title="Count of Scores",
+        yaxis_title="Y Axis Title",
+        title={
+            "x": .5,
+            'xanchor':"center"
+        })
+    
+    return violin
+    
 #Updating Shot Graph:
 @app.callback(
     dash.dependencies.Output('score_Distribution', 'figure'),
@@ -412,8 +435,8 @@ def update_score_distribution(data):
     score_dist = go.Figure()
     
     score_dist.add_trace(go.Histogram2dContour(
-            x=df["coordinates.x"],
-            y=df["coordinates.y"],
+            x=df["x_coordinates"],
+            y=df["y_coordinates"],
             z =df["scored"],
             colorscale = 'Thermal',
             xaxis = 'x',
@@ -426,7 +449,7 @@ def update_score_distribution(data):
             ))
     
     score_dist.add_trace(go.Histogram(
-            y = df.loc[df["scored"] == 1]["coordinates.y"],
+            y = df.loc[df["scored"] == 1]["y_coordinates"],
             xaxis = 'x2',
             
             marker = dict(
@@ -436,7 +459,7 @@ def update_score_distribution(data):
         ))
     
     score_dist.add_trace(go.Histogram(
-            x = df.loc[df["scored"] == 1]["coordinates.x"],
+            x = df.loc[df["scored"] == 1]["x_coordinates"],
             yaxis = 'y2',
             marker = dict(
                 color = 'rgba(0,0,0,1)'

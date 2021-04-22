@@ -12,6 +12,8 @@ class DataProcessing():
 	def load_data(self):
 		print(f'loading file {self.filepath}')
 		self.df = pd.read_csv(self.filepath)
+		self.df.loc[self.df.period <= 3, "total_time_remaining"] = (3 - self.df.loc[self.df.period <= 3]['period']) * 1200 +  self.df.loc[self.df.period <= 3]['period_time_remaining']
+		self.df.loc[self.df.period > 3, "total_time_remaining"] = 0
 		#self.df.rename(columns={"result.secondaryType": "shot_type", "team.triCode": "team"}, inplace=True)
 		return self.df
 	def create_dropdowns(self):
