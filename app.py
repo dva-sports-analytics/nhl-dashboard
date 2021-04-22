@@ -29,7 +29,7 @@ myheading='Hockey Analytics'
 githublink='https://github.com/dva-sports-analytics/nhl-dashboard'
 sourceurl='http://www.nhl.com/stats/'
 image_filename = 'assets/National_Hockey_League_shield.svg'
-decisionTree_path = 'assets/ShotAnalysisDecisionTree.svg'
+decisionTree_path = 'assets/ShotAnalysisDecisionTree.png'
 
 dp = DataProcessing(filepath='./data/shots-2017-2020.csv')
 
