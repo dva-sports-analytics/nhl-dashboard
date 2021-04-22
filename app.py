@@ -7,7 +7,7 @@ import pandas as pd
 import plotly.express as px
 import plotly.graph_objs as go
 
-from modules.DTmodel import RFClassifier
+from modules.DTmodel import DTClassifier
 from modules.data_processing import DataProcessing
 from modules.visualizations import Visualizations
 from dash.dependencies import Input,State, Output
@@ -59,16 +59,20 @@ hockey_rink_rev = vis.hockey_rink_rev
 # Build Visualizations --------:
 
 #Shot Distribution
+print(f'Creating Shot distribution')
 shots = vis.shot_distribution_heatmap()
 ## Scoring Distribution Chart
-
+print(f'Creating Score distribution')
 score_dist = vis.score_distribution_heatmap()
 #------------------------------------------------------------------------------------------------------------
-# Model Random Forest
-rf = RFClassifier()
-rf.load_model()
-rf.predict()
-dt_model = rf.plot_heatmap()
+# Model Decision Tree
+dt = DTClassifier()
+print(f'Loading Decision Tree')
+dt.load_model()
+print(f'Prediction from Model')
+dt.predict(df = df)
+print(f'Creating Predictive Heatmap')
+dt_model = dt.plot_heatmap()
 #Set Up dashboard ------------------------------------------------------------------------------------------:
 
 
@@ -76,6 +80,7 @@ dt_model = rf.plot_heatmap()
 
 
 ########### Initiate the app
+print(f'Loading Stylesheet')
 external_stylesheets = ['https://stackpath.bootstrapcdn.com/bootswatch/4.5.2/flatly/bootstrap.min.css']
 app = dash.Dash(__name__, external_stylesheets=[external_stylesheets,'./css/style.css'])
 server = app.server

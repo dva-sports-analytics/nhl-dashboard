@@ -14,13 +14,14 @@ from sklearn.tree import DecisionTreeClassifier
 # hockey_rink_rev = base64.b64encode(open(hockey_rink_rev_filepath, 'rb').read())
 
 
-class RFClassifier():
+class DTClassifier():
 
 	def __init__(self):
-		print('init of Random Forest Classifier')
+		print('init of Decision Tree Classifier')
 		self.hockey_rink_rev_filepath = 'assets/Half_ice_hockey_rink_rev.png'
-		self.model_path = 'assets/random_forest_clf_model.pkl'
+		self.model_path = 'assets/decision_tree_clf_model.pkl'
 		self.data_filepath = './data/shots-2017-2020.csv'
+		self.loaded = True
 
 	def train_model(self, df):
 		self.train_df = df
@@ -37,9 +38,9 @@ class RFClassifier():
 
 		return  self.clf
 
-	def predict(self):
+	def predict(self, df):
 		print("Predicting...")
-		self.preprocess_data()
+		self.preprocess_data(loaded_df = df)
 		self.pred = self.clf.predict(self.X_test)
 		print("scoring")
 		print(self.clf.score(self.X_test, self.y_test))
@@ -53,10 +54,9 @@ class RFClassifier():
 		self.X_test_final = self.X_test.copy()
 		self.X_test_final['scoreProb'] = [i[1] for i in self.Z_probs]
 
-	def preprocess_data(self, test_size=0.33):
+	def preprocess_data(self, loaded_df = None, test_size=0.33, loaded = True):
 		print(f'Preprocessing Data...')
-		# df.rename(columns={"team.triCode": "team"}, inplace=True)
-		self.df = pd.read_csv(self.data_filepath)
+		self.df = loaded_df
 		df = self.df
 		df.loc[df.period <= 3, "total_time_remaining"] = (3 - df.loc[df.period <= 3]['period']) * 1200 + \
 		                                                 df.loc[df.period <= 3]['period_time_remaining']
@@ -108,7 +108,7 @@ class RFClassifier():
 		self.hockey_rink_rev = base64.b64encode(open(self.hockey_rink_rev_filepath, 'rb').read())
 
 		score_probs = go.Figure()
-
+		print(f'Plotting Predict Heatmap')
 		score_probs.add_trace(go.Histogram2dContour(
 			x=self.X_test_final["x_coordinates"],
 			y=self.X_test_final["y_coordinates"],
