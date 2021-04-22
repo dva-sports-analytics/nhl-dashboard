@@ -154,9 +154,9 @@ sidebar = html.Div(children=[
         multi=True
     ),
     html.Br(),
-    html.Button(id='submit-button',
-                children='Refresh',
-                ),
+    #html.Button(id='submit-button',
+    #            children='Refresh',
+    #            ),
 
     #Bottom of Sidebar
     html.Br(),
