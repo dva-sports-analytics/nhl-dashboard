@@ -10,9 +10,9 @@ Created by:
 - [Korey Clement](https://www.linkedin.com/in/korey-clement-96997268/)
 - [Marcos Zuzuarrequi](https://www.linkedin.com/in/marcos-zuzu%C3%A1rregui-73a681bb/)
 
-## About the Project
+## Project Description
 
-## Getting Started
+## Getting Started/Installation
 
 ## Usage
 
