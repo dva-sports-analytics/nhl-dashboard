@@ -65,6 +65,7 @@ shots = vis.shot_distribution_heatmap()
 print(f'Creating Score distribution')
 score_dist = vis.score_distribution_heatmap()
 #------------------------------------------------------------------------------------------------------------
+<<<<<<< Updated upstream
 # Model Decision Tree
 dt = DTClassifier()
 print(f'Loading Decision Tree')
@@ -73,6 +74,13 @@ print(f'Prediction from Model')
 dt.predict(df = df)
 print(f'Creating Predictive Heatmap')
 dt_model = dt.plot_heatmap()
+=======
+# Model Random Forest
+DT = DTClassifier()
+#rf.load_model()
+#rf.predict()
+dt_model = DT.plot_heatmap()
+>>>>>>> Stashed changes
 #Set Up dashboard ------------------------------------------------------------------------------------------:
 
 
