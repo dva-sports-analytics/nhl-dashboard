@@ -184,7 +184,7 @@ class Visualizations():
 				zeroline=False,
 				domain=[0.15, 1],
 				showticklabels=False,
-				# fixedrange = True,
+				fixedrange = True,
 				showgrid=False
 			),
 			yaxis=dict(
@@ -197,7 +197,7 @@ class Visualizations():
 			xaxis2=dict(
 				zeroline=False,
 				domain=[0, .15],
-				# fixedrange = True,
+				fixedrange = True,
 				showgrid=False
 			),
 			yaxis2=dict(

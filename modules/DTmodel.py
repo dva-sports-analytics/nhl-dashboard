@@ -210,6 +210,7 @@ class DTClassifier():
 		score_probs.update_layout(
 			autosize=True
 		)
+		del self.X_test_final
 		return score_probs
 	def load_model(self):
 		print(f'Loading Model From {self.model_path}')
