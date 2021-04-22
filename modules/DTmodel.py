@@ -23,20 +23,20 @@ class DTClassifier():
 		self.data_filepath = './data/shots-2017-2020.csv'
 		self.loaded = True
 
-	def train_model(self, df):
-		self.train_df = df
-		self.preprocess_data()
-
-		self.oversample = SMOTE(random_state=42)
-
-		self.X_train, self.y_train = self.oversample.fit_resample(self.X_train, self.y_train)
-
-		clf = DecisionTreeClassifier(max_depth=5)
-		clf.fit(self.X_train, self.y_train.values.ravel())
-		self.clf = clf
-
-
-		return  self.clf
+#	def train_model(self, df):
+#		self.train_df = df
+#		self.preprocess_data()
+#
+#		self.oversample = SMOTE(random_state=42)
+#
+#		self.X_train, self.y_train = self.oversample.fit_resample(self.X_train, self.y_train)
+#
+#		clf = DecisionTreeClassifier(max_depth=5)
+#		clf.fit(self.X_train, self.y_train.values.ravel())
+#		self.clf = clf
+#
+#
+#		return  self.clf
 
 	def predict(self, df):
 		print("Predicting...")
@@ -55,7 +55,7 @@ class DTClassifier():
 		self.X_test_final['scoreProb'] = [i[1] for i in self.Z_probs]
 
 	def preprocess_data(self, loaded_df = None, test_size=0.33, loaded = True):
-		print(f'Preprocessing Data...')
+		print(f'Preprocessing Data for decision tree...')
 		self.df = loaded_df
 		df = self.df
 		df.loc[df.period <= 3, "total_time_remaining"] = (3 - df.loc[df.period <= 3]['period']) * 1200 + \
@@ -69,8 +69,9 @@ class DTClassifier():
 		    'time_of_last_shot', 'time_since_last_shot']] = scaler.transform(
 			df[['period_time_remaining', 'distance_to_goal', 'x_coordinates', "y_coordinates", 'total_time_remaining',
 			    'time_of_last_shot', 'time_since_last_shot']])
-
+			    
 		cat_vars = ['team', 'shot_type', 'is_rebound_attempt']
+		print(f'Data Scaled')
 		for var in cat_vars:
 			cat_list = 'var ' + '_ ' + var
 			cat_list = pd.get_dummies(df[var], prefix=var)
@@ -79,7 +80,7 @@ class DTClassifier():
 		cat_vars = ['team', 'shot_type', 'is_rebound_attempt']
 		data_vars = df.columns.values.tolist()
 		to_keep = [i for i in data_vars if i not in cat_vars]
-
+		print(f'Data Dummied')
 		df = df[to_keep]
 		df = df[['period', 'period_time_remaining', 'x_coordinates',
 		         'y_coordinates', 'distance_to_goal',
@@ -100,9 +101,12 @@ class DTClassifier():
 			(subset=['time_since_last_shot', 'time_of_last_shot', 'x_coordinates', 'y_coordinates', 'distance_to_goal'])
 		X_train, X_test, y_train, y_test = train_test_split(df.loc[:, df.columns != 'scored'], df[['scored']],
 		                                                    test_size=test_size, random_state=42)
-		self.X_train, self.X_test, self.y_train, self.y_test = X_train, X_test, y_train, y_test
-
-		return self.X_train, self.X_test, self.y_train, self.y_test
+		del X_train
+		del y_train
+		del df
+		#self.X_train, self.X_test, self.y_train, self.y_test = X_train, X_test, y_train, y_test
+		self.X_test, self.y_test = X_test, y_test
+		return self.X_test, self.y_test
 
 	def plot_heatmap(self):
 		self.hockey_rink_rev = base64.b64encode(open(self.hockey_rink_rev_filepath, 'rb').read())
